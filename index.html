@@ -8,16 +8,21 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            height: 100vh;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
             overflow: hidden;
+            height: 100vh;
+            transition: background 1s;
+        }
+
+        /* Background Animation (Toggleable) */
+        .animated-bg {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
         }
 
         @keyframes gradient {
@@ -34,18 +39,34 @@
             text-align: center;
             width: 90%;
             max-width: 500px;
+            position: relative;
+            z-index: 10;
         }
 
+        /* Glowing Wheel Animation */
         canvas {
             margin: 20px auto;
             display: block;
-            animation: pulse 2s infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7));
+            transition: all 0.3s;
+        }
+
+        canvas:hover {
+            filter: drop-shadow(0 0 20px #ffffff);
+        }
+
+        .spinning {
+            animation: pulse 0.5s infinite alternate, glow 1s infinite alternate;
         }
 
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        @keyframes glow {
+            0% { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7)); }
+            100% { filter: drop-shadow(0 0 25px #ffffff); }
         }
 
         button {
@@ -93,10 +114,32 @@
             margin-top: 15px;
             font-size: 14px;
         }
+
+        .settings {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .tg-channel {
+            background: #0088cc;
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin-top: 15px;
+            display: inline-block;
+            cursor: pointer;
+        }
     </style>
 </head>
-<body>
+<body class="animated-bg">
     <div class="container">
+        <div class="settings">
+            <button id="bgToggle">🌌 BG On/Off</button>
+            <button id="soundToggle">🔊 Sound On</button>
+        </div>
+        
         <h1>🎡 WinSpin Premium</h1>
         
         <input type="text" id="username" placeholder="Enter Username">
@@ -120,12 +163,22 @@
         <div class="referral">
             <p id="refLink" style="display:none;">Your referral link: <span id="refCode"></span></p>
         </div>
+        
+        <div class="tg-channel" id="tgChannel">
+            Join Our Telegram Channel
+        </div>
     </div>
+
+    <!-- Sound Effects -->
+    <audio id="spinSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
+    <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
+    <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"></audio>
 
     <script>
         // Telegram config
         const BOT_TOKEN = "7660325670:AAGjyxqcfafCpx-BiYNIRlPG4u5gd7NDxsI";
         const CHAT_ID = "5054074724";
+        const TG_CHANNEL = "https://t.me/yourchannel";
         
         // Wheel segments
         const segments = [
@@ -145,6 +198,8 @@
         let username = "";
         let isSpinning = false;
         let referralCode = "";
+        let soundEnabled = true;
+        let bgAnimationEnabled = true;
         
         // DOM elements
         const wheel = document.getElementById('wheel');
@@ -157,6 +212,12 @@
         const refLink = document.getElementById('refLink');
         const refCode = document.getElementById('refCode');
         const scoresDiv = document.getElementById('scores');
+        const bgToggle = document.getElementById('bgToggle');
+        const soundToggle = document.getElementById('soundToggle');
+        const tgChannel = document.getElementById('tgChannel');
+        const spinSound = document.getElementById('spinSound');
+        const winSound = document.getElementById('winSound');
+        const clickSound = document.getElementById('clickSound');
         
         // Initialize
         drawWheel();
@@ -167,11 +228,16 @@
         saveBtn.addEventListener('click', saveUsername);
         spinBtn.addEventListener('click', spinWheel);
         refBtn.addEventListener('click', generateReferral);
+        bgToggle.addEventListener('click', toggleBackground);
+        soundToggle.addEventListener('click', toggleSound);
+        tgChannel.addEventListener('click', openTelegram);
         
         // Functions
         function drawWheel() {
             const center = wheel.width / 2;
             const arc = Math.PI * 2 / segments.length;
+            
+            ctx.clearRect(0, 0, wheel.width, wheel.height);
             
             segments.forEach((segment, i) => {
                 ctx.beginPath();
@@ -199,10 +265,15 @@
             if (spinsLeft <= 0) return alert("No spins left!");
             if (coins < 10) return alert("Not enough coins!");
             
+            playSound(clickSound);
             isSpinning = true;
             spinsLeft--;
             coins -= 10;
             updateStats();
+            
+            // Add spinning animation
+            wheel.classList.add('spinning');
+            playSound(spinSound);
             
             const spinDuration = 3000;
             const spinAngle = 3600 + Math.floor(Math.random() * 360);
@@ -227,6 +298,7 @@
                 // Award prize
                 if (prize > 0) {
                     coins += prize;
+                    playSound(winSound);
                     confetti({
                         particleCount: 150,
                         spread: 70,
@@ -234,18 +306,26 @@
                     });
                     
                     // Send Telegram alert
-                    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${username} won ${prize} coins!`);
+                    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(username)} won ${prize} coins!`);
                 }
                 
                 updateStats();
                 saveGame();
                 isSpinning = false;
+                wheel.classList.remove('spinning');
                 
                 setTimeout(drawWheel, 1000);
             }, spinDuration);
         }
         
+        function playSound(sound) {
+            if (!soundEnabled) return;
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log("Sound playback prevented:", e));
+        }
+        
         function saveUsername() {
+            playSound(clickSound);
             username = document.getElementById('username').value.trim();
             if (!username) return alert("Please enter username!");
             
@@ -268,6 +348,7 @@
         }
         
         function generateReferral() {
+            playSound(clickSound);
             if (!username) return alert("Please save username first!");
             
             if (!referralCode) {
@@ -278,6 +359,29 @@
             }
             
             alert("Share your referral link to earn 50 coins when friends join!");
+        }
+        
+        function toggleBackground() {
+            playSound(clickSound);
+            bgAnimationEnabled = !bgAnimationEnabled;
+            if (bgAnimationEnabled) {
+                document.body.classList.add('animated-bg');
+                bgToggle.textContent = "🌌 BG On";
+            } else {
+                document.body.classList.remove('animated-bg');
+                bgToggle.textContent = "🌌 BG Off";
+            }
+        }
+        
+        function toggleSound() {
+            playSound(clickSound);
+            soundEnabled = !soundEnabled;
+            soundToggle.textContent = soundEnabled ? "🔊 Sound On" : "🔇 Sound Off";
+        }
+        
+        function openTelegram() {
+            playSound(clickSound);
+            window.open(TG_CHANNEL, '_blank');
         }
         
         function updateStats() {
@@ -299,7 +403,6 @@
         }
         
         function updateLeaderboard() {
-            // This is a simplified version - in real app you'd use a server
             const scores = [];
             
             for (let i = 0; i < localStorage.length; i++) {
@@ -312,4 +415,21 @@
                 }
             }
             
-            scores.sort((a, b) =>
+            scores.sort((a, b) => b.coins - a.coins);
+            localStorage.setItem("leaderboard", JSON.stringify(scores));
+            
+            loadLeaderboard();
+        }
+        
+        function loadLeaderboard() {
+            const savedLeaderboard = localStorage.getItem("leaderboard");
+            if (!savedLeaderboard) return;
+            
+            const leaderboard = JSON.parse(savedLeaderboard);
+            scoresDiv.innerHTML = leaderboard.slice(0, 5).map(user => 
+                `<div>${user.username}: ${user.coins} coins</div>`
+            ).join("");
+        }
+    </script>
+</body>
+    </html>
