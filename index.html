@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Naki Spin Wheel</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0"></script>
+</head>
+<body>
+  <div class="app-container">
+    <div class="header">
+      <h1>🎡 Naki Spin Wheel</h1>
+      <div class="controls">
+        <button id="darkModeToggle">🌙</button>
+        <button id="soundToggle">🔊</button>
+      </div>
+    </div>
+
+    <div class="wheel-container">
+      <canvas id="wheelCanvas" width="400" height="400"></canvas>
+      <button id="spinBtn">SPIN (Cost: 10 coins)</button>
+    </div>
+
+    <div class="user-panel">
+      <input type="text" id="usernameInput" placeholder="Enter your name">
+      <div class="stats">
+        <p>Coins: <span id="coinCount">100</span></p>
+        <p>Spins today: <span id="spinCount">0</span>/5</p>
+      </div>
+    </div>
+
+    <div class="telegram-banner">
+      <p>Join our Telegram: <a href="https://t.me/yourchannel" target="_blank">@YourChannel</a></p>
+    </div>
+  </div>
+
+  <audio id="spinSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
+  <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
