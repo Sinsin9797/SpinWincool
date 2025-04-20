@@ -1,0 +1,68 @@
+:root {
+  --bg-color: #f5f5f5;
+  --text-color: #333;
+  --primary-color: #4CAF50;
+  --secondary-color: #2196F3;
+  --wheel-border: #333;
+}
+
+[data-theme="dark"] {
+  --bg-color: #121212;
+  --text-color: #f5f5f5;
+  --wheel-border: #888;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: all 0.3s;
+}
+
+.app-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.wheel-container {
+  position: relative;
+  margin: 30px 0;
+}
+
+#wheelCanvas {
+  border: 5px solid var(--wheel-border);
+  border-radius: 50%;
+  transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+}
+
+#spinBtn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 18px;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.3s;
+}
+
+#spinBtn:hover {
+  transform: scale(1.05);
+}
+
+.user-panel {
+  margin: 20px 0;
+}
+
+.telegram-banner {
+  background-color: #0088cc;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+/* Add more styles as needed */
