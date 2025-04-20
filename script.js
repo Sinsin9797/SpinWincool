@@ -1,169 +1,76 @@
-// Configuration
+// CONFIG
 const segments = [
-  { text: "10 Coins", color: "#FF6384", icon: "💰" },
-  { text: "20 Coins", color: "#36A2EB", icon: "💎" },
-  { text: "5 Coins", color: "#FFCE56", icon: "⭐" },
-  { text: "50 Coins", color: "#4BC0C0", icon: "🏆" },
-  { text: "Try Again", color: "#9966FF", icon: "🔄" },
-  { text: "100 Coins", color: "#FF9F40", icon: "🎯" }
+  { text: "100", color: "#FF6384", value: 100 },
+  { text: "200", color: "#36A2EB", value: 200 },
+  { text: "50", color: "#FFCE56", value: 50 },
+  { text: "300", color: "#4BC0C0", value: 300 },
+  { text: "150", color: "#9966FF", value: 150 },
+  { text: "400", color: "#FF9F40", value: 400 }
 ];
 
-// Telegram Settings (replace with yours)
-const BOT_TOKEN = "YOUR_BOT_TOKEN";
-const CHAT_ID = "YOUR_CHAT_ID";
-
-// App State
-let coins = 100;
-let spinsToday = 0;
+// INIT
+const wheel = document.getElementById('wheel');
+const ctx = wheel.getContext('2d');
 let isSpinning = false;
-let soundEnabled = true;
 
-// DOM Elements
-const wheelCanvas = document.getElementById('wheelCanvas');
-const spinBtn = document.getElementById('spinBtn');
-const coinCountEl = document.getElementById('coinCount');
-const spinCountEl = document.getElementById('spinCount');
-const darkModeToggle = document.getElementById('darkModeToggle');
-const soundToggle = document.getElementById('soundToggle');
-const usernameInput = document.getElementById('usernameInput');
-const spinSound = document.getElementById('spinSound');
-const winSound = document.getElementById('winSound');
+// SOUNDS (NEW WORKING LINKS)
+const spinSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3');
+const winSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3');
 
-// Initialize Wheel
-drawWheel();
-
-// Event Listeners
-spinBtn.addEventListener('click', startSpin);
-darkModeToggle.addEventListener('click', toggleDarkMode);
-soundToggle.addEventListener('click', toggleSound);
-
-// Main Functions
+// DRAW WHEEL
 function drawWheel() {
-  const ctx = wheelCanvas.getContext('2d');
-  const center = wheelCanvas.width / 2;
-  const segmentAngle = (2 * Math.PI) / segments.length;
+  const center = wheel.width / 2;
+  const arc = Math.PI * 2 / segments.length;
   
   segments.forEach((segment, i) => {
     ctx.beginPath();
     ctx.fillStyle = segment.color;
     ctx.moveTo(center, center);
-    ctx.arc(center, center, center - 10, i * segmentAngle, (i + 1) * segmentAngle);
-    ctx.closePath();
+    ctx.arc(center, center, center - 10, i * arc, (i + 1) * arc);
+    ctx.lineTo(center, center);
     ctx.fill();
     
-    // Draw text
+    // Text
     ctx.save();
     ctx.translate(center, center);
-    ctx.rotate(i * segmentAngle + segmentAngle / 2);
+    ctx.rotate(i * arc + arc / 2);
     ctx.textAlign = "right";
     ctx.fillStyle = "#fff";
-    ctx.font = "bold 14px Arial";
-    ctx.fillText(segment.icon + " " + segment.text, center - 20, 10);
+    ctx.font = "bold 16px Arial";
+    ctx.fillText(segment.text, center - 10, 10);
     ctx.restore();
   });
 }
 
-function startSpin() {
+// SPIN FUNCTION (FIXED)
+function spinWheel() {
   if (isSpinning) return;
-  if (coins < 10) return alert("Not enough coins!");
-  if (spinsToday >= 5) return alert("Daily spin limit reached!");
-  
-  coins -= 10;
-  spinsToday++;
-  updateStats();
-  
-  if (soundEnabled) spinSound.play();
   
   isSpinning = true;
-  spinBtn.disabled = true;
+  spinSound.play();
   
   const spinAngle = 3600 + Math.floor(Math.random() * 360);
-  wheelCanvas.style.transform = `rotate(${spinAngle}deg)`;
+  wheel.style.transition = "transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)";
+  wheel.style.transform = `rotate(${spinAngle}deg)`;
   
   setTimeout(() => {
     const winnerIndex = Math.floor(((spinAngle % 360) / 360) * segments.length);
-    declareWinner(winnerIndex);
+    showResult(segments[winnerIndex]);
   }, 4000);
 }
 
-function declareWinner(winnerIndex) {
+// RESULT DISPLAY (NEW)
+function showResult(prize) {
   isSpinning = false;
-  spinBtn.disabled = false;
-  
-  const winnerSegment = segments[winnerIndex];
-  highlightSegment(winnerIndex);
-  
-  if (soundEnabled) winSound.play();
-  triggerConfetti();
-  
-  // Process prize
-  if (winnerSegment.text.includes("Coins")) {
-    const coinsWon = parseInt(winnerSegment.text);
-    coins += coinsWon;
-    showAlert(`You won ${coinsWon} coins!`, "success");
-  } else {
-    showAlert(winnerSegment.text, "info");
-  }
-  
-  updateStats();
-  
-  // Telegram alert (if username entered)
-  if (usernameInput.value) {
-    sendTelegramAlert(usernameInput.value, winnerSegment.text);
-  }
-}
-
-// Helper Functions
-function highlightSegment(index) {
-  const ctx = wheelCanvas.getContext('2d');
-  const center = wheelCanvas.width / 2;
-  const segmentAngle = (2 * Math.PI) / segments.length;
-  
-  ctx.beginPath();
-  ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
-  ctx.moveTo(center, center);
-  ctx.arc(center, center, center - 10, index * segmentAngle, (index + 1) * segmentAngle);
-  ctx.closePath();
-  ctx.fill();
-  
-  setTimeout(drawWheel, 1000);
-}
-
-function updateStats() {
-  coinCountEl.textContent = coins;
-  spinCountEl.textContent = spinsToday;
-}
-
-function toggleDarkMode() {
-  document.body.dataset.theme = document.body.dataset.theme === "dark" ? "light" : "dark";
-}
-
-function toggleSound() {
-  soundEnabled = !soundEnabled;
-  soundToggle.textContent = soundEnabled ? "🔊" : "🔇";
-}
-
-function showAlert(message, type) {
-  Swal.fire({
-    title: message,
-    icon: type,
-    confirmButtonText: 'OK'
-  });
-}
-
-function triggerConfetti() {
+  winSound.play();
   confetti({
     particleCount: 150,
-    spread: 70,
-    origin: { y: 0.6 }
+    spread: 70
   });
+  
+  alert(`🎉 You won ${prize.value} coins!`);
 }
 
-function sendTelegramAlert(user, prize) {
-  // Replace with actual fetch request to Telegram API
-  console.log(`Alert sent: ${user} won ${prize}`);
-  // fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=🎉 ${user} won ${prize}!`);
-}
-
-// Initialize
-updateStats();
+// INITIALIZE
+drawWheel();
+document.getElementById('spinBtn').addEventListener('click', spinWheel);
