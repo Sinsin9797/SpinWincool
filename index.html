@@ -25,33 +25,18 @@
             overflow-x: hidden;
         }
         
-        /* Animated Background */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.5;
-        }
-        
-        /* Main Container */
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 2rem;
-            position: relative;
-            z-index: 10;
+            text-align: center;
         }
         
-        /* 3D Wheel with Glow */
         .wheel-container {
             position: relative;
             width: 350px;
             height: 350px;
             margin: 2rem auto;
-            transform-style: preserve-3d;
         }
         
         #wheel {
@@ -62,77 +47,85 @@
             transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
         }
         
-        /* Telegram Button */
+        button {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+        }
+        
         .telegram-btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 8px;
             background: #0088cc;
             color: white;
             padding: 12px 24px;
             border-radius: 50px;
             text-decoration: none;
             margin-top: 1rem;
-            font-weight: bold;
         }
         
-        /* Referral Section */
-        .referral-box {
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1rem 0;
+        }
+        
+        .stat-box {
             background: rgba(255,255,255,0.1);
             padding: 1rem;
-            border-radius: 15px;
-            margin-top: 1rem;
+            border-radius: 10px;
+            min-width: 120px;
         }
-        
-        /* Add all other styles from previous versions */
     </style>
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="particles" id="particles"></div>
-    
     <div class="container">
-        <h1 style="text-align: center; margin-bottom: 1.5rem; font-size: 2.5rem; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        <h1 style="background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
             ✨ Ultimate Spin Wheel ✨
         </h1>
         
-        <!-- 3D Wheel -->
+        <div class="stats">
+            <div class="stat-box">
+                <i class="fas fa-coins"></i> <span id="coins">1000</span> Coins
+            </div>
+            <div class="stat-box">
+                <i class="fas fa-sync-alt"></i> <span id="spins">5</span> Spins Left
+            </div>
+        </div>
+        
         <div class="wheel-container">
             <canvas id="wheel" width="350" height="350"></canvas>
         </div>
         
-        <!-- Spin Button -->
-        <button id="spinBtn" style="display: block; margin: 0 auto;"><i class="fas fa-redo"></i> SPIN NOW</button>
+        <button id="spinBtn"><i class="fas fa-redo"></i> SPIN NOW (50 Coins)</button>
         
-        <!-- Telegram Integration -->
-        <a href="https://t.me/yourchannel" class="telegram-btn" target="_blank" id="tgBtn">
+        <a href="https://t.me/yourchannel" class="telegram-btn" target="_blank">
             <i class="fab fa-telegram"></i> Join Our Telegram
         </a>
         
-        <!-- Referral System -->
-        <div class="referral-box" id="referralSection">
-            <h3><i class="fas fa-gift"></i> Earn 50 Coins Per Referral</h3>
-            <div id="refLink" style="word-break: break-all; margin: 1rem 0;"></div>
-            <button id="copyRefBtn"><i class="far fa-copy"></i> Copy Link</button>
-        </div>
-        
-        <!-- Leaderboard -->
-        <div id="leaderboard" style="margin-top: 2rem;">
+        <div style="margin-top: 2rem;">
             <h3><i class="fas fa-trophy"></i> Leaderboard</h3>
-            <div id="leaderboardList"></div>
+            <div id="leaderboard"></div>
         </div>
     </div>
 
     <script>
         // ======================
-        // ALL 50+ FEATURES
+        // CORE CONFIGURATION
         // ======================
-        
-        // 1. Telegram Integration
-        const BOT_TOKEN = "YOUR_BOT_TOKEN";
-        const CHAT_ID = "YOUR_CHAT_ID";
-        
-        // 2. Wheel Configuration
         const segments = [
             { text: "100", color: "#FF6384", value: 100, icon: "💰" },
             { text: "200", color: "#36A2EB", value: 200, icon: "💎" },
@@ -142,58 +135,113 @@
             { text: "400", color: "#FF9F40", value: 400, icon: "✨" }
         ];
         
-        // 3. Game State
+        // ======================
+        // GAME STATE
+        // ======================
         let coins = 1000;
         let spinsLeft = 5;
         let isSpinning = false;
-        let referralCode = "";
         
-        // 4. Initialize
-        initWheel();
-        initReferral();
+        // ======================
+        // INITIALIZE
+        // ======================
+        const wheel = document.getElementById('wheel');
+        const ctx = wheel.getContext('2d');
+        const spinBtn = document.getElementById('spinBtn');
+        const coinsDisplay = document.getElementById('coins');
+        const spinsDisplay = document.getElementById('spins');
+        const leaderboard = document.getElementById('leaderboard');
+        
+        drawWheel();
         updateLeaderboard();
         
         // ======================
-        // CORE FUNCTIONS
+        // MAIN FUNCTIONS
         // ======================
-        
-        function initWheel() {
-            // Wheel drawing logic
+        function drawWheel() {
+            const center = wheel.width / 2;
+            const arc = Math.PI * 2 / segments.length;
+            
+            segments.forEach((segment, i) => {
+                ctx.beginPath();
+                ctx.fillStyle = segment.color;
+                ctx.moveTo(center, center);
+                ctx.arc(center, center, center - 10, i * arc, (i + 1) * arc);
+                ctx.lineTo(center, center);
+                ctx.fill();
+                
+                ctx.save();
+                ctx.translate(center, center);
+                ctx.rotate(i * arc + arc / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 14px Arial";
+                ctx.fillText(segment.icon, center - 40, 5);
+                ctx.font = "bold 18px Arial";
+                ctx.fillText(segment.text, center - 10, 5);
+                ctx.restore();
+            });
         }
         
         function spinWheel() {
-            // Enhanced spinning logic
+            if (isSpinning) return;
+            if (coins < 50) return alert("Not enough coins!");
+            if (spinsLeft <= 0) return alert("No spins left!");
+            
+            isSpinning = true;
+            coins -= 50;
+            spinsLeft--;
+            updateStats();
+            
+            const spinAngle = 3600 + Math.floor(Math.random() * 3600);
+            wheel.style.transform = `rotate(${spinAngle}deg)`;
+            
+            setTimeout(() => {
+                const winnerIndex = Math.floor(((spinAngle % 360) / 360) * segments.length);
+                const prize = segments[winnerIndex].value;
+                
+                coins += prize;
+                updateStats();
+                
+                // Confetti celebration
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+                
+                // Telegram notification
+                // fetch(`https://api.telegram.org/botYOUR_TOKEN/sendMessage?chat_id=YOUR_CHAT_ID&text=User won ${prize} coins!`);
+                
+                isSpinning = false;
+                updateLeaderboard();
+            }, 4000);
         }
         
-        // 5. Telegram Functions
-        function sendTelegramAlert(message) {
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`);
+        function updateStats() {
+            coinsDisplay.textContent = coins;
+            spinsDisplay.textContent = spinsLeft;
+            localStorage.setItem('spinWheelCoins', coins);
         }
         
-        // 6. Referral System
-        function initReferral() {
-            referralCode = localStorage.getItem('referralCode') || generateReferralCode();
-            document.getElementById('refLink').textContent = 
-                `https://yourdomain.com/?ref=${referralCode}`;
-        }
-        
-        // 7. Leaderboard
         function updateLeaderboard() {
-            // Leaderboard logic
+            leaderboard.innerHTML = `
+                <div>1. Player1: 1500 coins</div>
+                <div>2. Player2: 1200 coins</div>
+                <div>3. You: ${coins} coins</div>
+            `;
         }
         
         // ======================
-        // 50+ FEATURES INCLUDED:
+        // EVENT LISTENERS
         // ======================
-        // - Telegram bot integration
-        // - Referral system with unique codes
-        // - Leaderboard tracking
-        // - Daily spin limits
-        // - Coin rewards system
-        // - Animated wheel with glow effects
-        // - Confetti celebrations
-        // - Mobile responsive design
-        // - And 40+ more features...
+        spinBtn.addEventListener('click', spinWheel);
+        
+        // Load saved coins
+        if (localStorage.getItem('spinWheelCoins')) {
+            coins = parseInt(localStorage.getItem('spinWheelCoins'));
+            updateStats();
+        }
     </script>
 </body>
 </html>
