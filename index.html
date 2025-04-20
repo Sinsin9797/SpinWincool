@@ -9,21 +9,25 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             background: #1a1a2e;
             color: white;
+            overflow: hidden;
         }
         .container {
             text-align: center;
+            position: relative;
         }
         canvas {
             border: 5px solid #8a2be2;
             border-radius: 50%;
             box-shadow: 0 0 20px #8a2be2;
             margin: 20px;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
         }
         button {
             background: linear-gradient(45deg, #8a2be2, #ff1493);
@@ -34,18 +38,37 @@
             border-radius: 50px;
             cursor: pointer;
             margin-top: 20px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #8a2be2;
+        }
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .result {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #8a2be2;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="result" id="result"></div>
         <h1>Premium Spin Wheel</h1>
         <canvas id="wheel" width="400" height="400"></canvas>
         <button id="spinBtn">SPIN NOW</button>
     </div>
 
     <script>
-        // CONFIG
+        // CONFIG - Customize your prizes here
         const segments = [
             { text: "100", color: "#FF6384", value: 100 },
             { text: "200", color: "#36A2EB", value: 200 },
@@ -55,18 +78,20 @@
             { text: "400", color: "#FF9F40", value: 400 }
         ];
 
-        // INIT
+        // INITIALIZE
         const wheel = document.getElementById('wheel');
         const ctx = wheel.getContext('2d');
         const spinBtn = document.getElementById('spinBtn');
+        const resultDisplay = document.getElementById('result');
         let isSpinning = false;
 
-        // DRAW WHEEL
+        // DRAW THE WHEEL
         function drawWheel() {
             const center = wheel.width / 2;
             const arc = Math.PI * 2 / segments.length;
             
             segments.forEach((segment, i) => {
+                // Draw segments
                 ctx.beginPath();
                 ctx.fillStyle = segment.color;
                 ctx.moveTo(center, center);
@@ -74,7 +99,7 @@
                 ctx.lineTo(center, center);
                 ctx.fill();
                 
-                // Text
+                // Draw text
                 ctx.save();
                 ctx.translate(center, center);
                 ctx.rotate(i * arc + arc / 2);
@@ -91,28 +116,48 @@
             if (isSpinning) return;
             
             isSpinning = true;
+            spinBtn.disabled = true;
+            resultDisplay.textContent = "";
             
-            const spinAngle = 3600 + Math.floor(Math.random() * 360);
-            wheel.style.transition = "transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)";
+            // Random spin with at least 5 full rotations
+            const spinAngle = 1800 + Math.floor(Math.random() * 3600);
             wheel.style.transform = `rotate(${spinAngle}deg)`;
             
+            // Show result after spinning
             setTimeout(() => {
-                const winnerIndex = Math.floor(((spinAngle % 360) / 360) * segments.length);
-                showResult(segments[winnerIndex]);
+                const normalizedAngle = spinAngle % 360;
+                const winnerIndex = Math.floor((normalizedAngle / 360) * segments.length);
+                declareWinner(segments[winnerIndex]);
             }, 4000);
         }
 
-        // SHOW RESULT
-        function showResult(prize) {
+        // WINNER DECLARATION
+        function declareWinner(prize) {
             isSpinning = false;
+            spinBtn.disabled = false;
+            
+            // Confetti celebration
             confetti({
                 particleCount: 150,
-                spread: 70
+                spread: 70,
+                origin: { y: 0.6 }
             });
-            alert(`🎉 You won ${prize.value} coins!`);
+            
+            // Display result
+            resultDisplay.textContent = `🎉 You won ${prize.value} coins!`;
+            
+            // Reset wheel after 3 seconds
+            setTimeout(() => {
+                resultDisplay.textContent = "";
+                wheel.style.transition = 'none';
+                wheel.style.transform = 'rotate(0deg)';
+                setTimeout(() => {
+                    wheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+                }, 10);
+            }, 3000);
         }
 
-        // INITIALIZE
+        // INITIAL SETUP
         drawWheel();
         spinBtn.addEventListener('click', spinWheel);
     </script>
