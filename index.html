@@ -26,7 +26,7 @@
             position: relative;
         }
         
-        /* Animated Background Particles */
+        /* Animated Background */
         .particles {
             position: fixed;
             top: 0;
@@ -64,11 +64,9 @@
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transform-style: preserve-3d;
-            perspective: 1000px;
         }
         
-        /* 3D Animated Wheel */
+        /* 3D Wheel */
         .wheel-container {
             position: relative;
             width: 350px;
@@ -94,24 +92,6 @@
             transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
         }
         
-        /* Glow Effect */
-        .wheel-glow {
-            position: absolute;
-            width: 110%;
-            height: 110%;
-            top: -5%;
-            left: -5%;
-            background: radial-gradient(circle, rgba(255,20,147,0.8) 0%, rgba(138,43,226,0.2) 70%);
-            border-radius: 50%;
-            filter: blur(15px);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .wheel-container:hover .wheel-glow {
-            opacity: 0.7;
-        }
-        
         /* Spin Button */
         #spinBtn {
             background: linear-gradient(45deg, var(--primary), var(--secondary));
@@ -124,354 +104,82 @@
             margin: 1rem 0;
             box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
             transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-        
-        #spinBtn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, var(--secondary), var(--primary));
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.3s;
         }
         
         #spinBtn:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 25px rgba(138, 43, 226, 0.6);
         }
-        
-        #spinBtn:hover::before {
-            opacity: 1;
-        }
-        
-        /* User Input */
-        .input-group {
-            margin: 1.5rem 0;
-        }
-        
-        #username {
-            padding: 0.8rem 1.2rem;
-            border-radius: 50px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1rem;
-            width: 70%;
-            max-width: 300px;
-            transition: all 0.3s;
-        }
-        
-        #username:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
-        }
-        
-        /* Stats Display */
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin: 1.5rem 0;
-            font-size: 1.1rem;
-        }
-        
-        .stat-box {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.8rem 1.5rem;
-            border-radius: 15px;
-            min-width: 120px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Referral Section */
-        .referral {
-            margin: 2rem 0;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1.5rem;
-            border-radius: 15px;
-            display: none;
-        }
-        
-        .referral.active {
-            display: block;
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Leaderboard */
-        .leaderboard {
-            margin: 2rem 0;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1.5rem;
-            border-radius: 15px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .leaderboard-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.8rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            animation: slideIn 0.3s ease-out forwards;
-            opacity: 0;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(-20px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        /* Telegram Button */
-        .tg-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: #0088cc;
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            margin-top: 1rem;
-            transition: all 0.3s;
-        }
-        
-        .tg-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 136, 204, 0.4);
-        }
-        
-        /* Settings Toggles */
-        .settings {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .toggle-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-        
-        .toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1.5rem;
-                border-radius: 0;
-            }
-            
-            .wheel-container {
-                width: 280px;
-                height: 280px;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Animated Background Particles -->
+    <!-- Animated Background -->
     <div class="particles" id="particles"></div>
     
     <div class="container">
-        <!-- Settings Toggles -->
-        <div class="settings">
-            <button class="toggle-btn" id="bgToggle"><i class="fas fa-magic"></i></button>
-            <button class="toggle-btn" id="soundToggle"><i class="fas fa-volume-up"></i></button>
-        </div>
-        
-        <h1 style="text-align: center; margin-bottom: 1.5rem; font-size: 2.5rem; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 2px 10px rgba(138, 43, 226, 0.3);">
+        <h1 style="text-align: center; margin-bottom: 1.5rem; font-size: 2.5rem; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
             ✨ Premium Spin Wheel ✨
         </h1>
         
-        <!-- User Input -->
-        <div class="input-group" style="text-align: center;">
-            <input type="text" id="username" placeholder="Enter Your Username">
-            <button id="saveBtn" style="margin-left: 0.5rem;"><i class="fas fa-save"></i> Save</button>
-        </div>
-        
-        <!-- Stats Display -->
-        <div class="stats">
-            <div class="stat-box">
-                <i class="fas fa-coins"></i> <span id="coins">0</span> Coins
-            </div>
-            <div class="stat-box">
-                <i class="fas fa-sync-alt"></i> <span id="spins">3</span> Spins Left
-            </div>
-        </div>
-        
-        <!-- 3D Wheel with Glow Effect -->
+        <!-- 3D Wheel -->
         <div class="wheel-container">
-            <div class="wheel-glow"></div>
             <canvas id="wheel" width="350" height="350"></canvas>
         </div>
         
         <!-- Spin Button -->
         <div style="text-align: center;">
-            <button id="spinBtn"><i class="fas fa-redo"></i> SPIN (10 Coins)</button>
-            <button id="refBtn" style="margin-left: 0.5rem;"><i class="fas fa-user-plus"></i> Get Referral</button>
-        </div>
-        
-        <!-- Referral Section -->
-        <div class="referral" id="referralSection">
-            <h3 style="text-align: center; margin-bottom: 1rem;"><i class="fas fa-gift"></i> Earn 50 Coins Per Referral</h3>
-            <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; word-break: break-all;">
-                Your referral link: <span id="refLink">https://example.com/?ref=<span id="refCode"></span></span>
-                <button id="copyRef" style="margin-left: 0.5rem; padding: 0.3rem 0.7rem; font-size: 0.8rem;"><i class="far fa-copy"></i> Copy</button>
-            </div>
-            <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
-                Share this link to earn coins when your friends join and spin!
-            </p>
-        </div>
-        
-        <!-- Leaderboard -->
-        <div class="leaderboard">
-            <h3 style="text-align: center; margin-bottom: 1rem;"><i class="fas fa-trophy"></i> Leaderboard</h3>
-            <div id="leaderboardItems"></div>
-        </div>
-        
-        <!-- Telegram Button -->
-        <div style="text-align: center;">
-            <a href="https://t.me/yourchannel" class="tg-btn" target="_blank" id="tgBtn">
-                <i class="fab fa-telegram"></i> Join Our Telegram
-            </a>
+            <button id="spinBtn"><i class="fas fa-redo"></i> SPIN NOW</button>
         </div>
     </div>
 
     <!-- Sound Effects -->
-    <audio id="spinSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
-    <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
-    <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"></audio>
-    <audio id="refSound" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3"></audio>
+    <audio id="spinSound" src="https://assets.mixkit.co/active/sfx-216/mixkit-arcade-game-jump-coin-216.wav"></audio>
+    <audio id="winSound" src="https://assets.mixkit.co/active/sfx-253/mixkit-unlock-game-notification-253.wav"></audio>
+    <audio id="clickSound" src="https://assets.mixkit.co/active/sfx-1109/mixkit-select-click-1109.wav"></audio>
 
     <script>
         // ======================
         // CONFIGURATION
         // ======================
-        const BOT_TOKEN = "7660325670:AAGjyxqcfafCpx-BiYNIRlPG4u5gd7NDxsI";
-        const CHAT_ID = "5054074724";
-        const TG_CHANNEL = "https://t.me/yourchannel";
-        
         const segments = [
-            { text: "0", color: "#FF6384", value: 0, icon: "❌" },
-            { text: "30", color: "#36A2EB", value: 30, icon: "💰" },
-            { text: "50", color: "#FFCE56", value: 50, icon: "💎" },
-            { text: "0", color: "#4BC0C0", value: 0, icon: "❌" },
-            { text: "20", color: "#9966FF", value: 20, icon: "⭐" },
-            { text: "100", color: "#FF9F40", value: 100, icon: "🏆" },
-            { text: "0", color: "#8AC24A", value: 0, icon: "❌" },
-            { text: "10", color: "#FF5722", value: 10, icon: "🎁" }
+            { text: "100", color: "#FF6384", value: 100, icon: "💰" },
+            { text: "200", color: "#36A2EB", value: 200, icon: "💎" },
+            { text: "50", color: "#FFCE56", value: 50, icon: "⭐" },
+            { text: "300", color: "#4BC0C0", value: 300, icon: "🏆" },
+            { text: "150", color: "#9966FF", value: 150, icon: "🎁" },
+            { text: "400", color: "#FF9F40", value: 400, icon: "✨" }
         ];
         
         // ======================
-        // GAME STATE
-        // ======================
-        let coins = 100;
-        let spinsLeft = 5;
-        let username = "";
-        let isSpinning = false;
-        let referralCode = "";
-        let soundEnabled = true;
-        let bgAnimationEnabled = true;
-        
-        // ======================
-        // DOM ELEMENTS
+        // GAME LOGIC
         // ======================
         const wheel = document.getElementById('wheel');
         const ctx = wheel.getContext('2d');
         const spinBtn = document.getElementById('spinBtn');
-        const saveBtn = document.getElementById('saveBtn');
-        const refBtn = document.getElementById('refBtn');
-        const copyRef = document.getElementById('copyRef');
-        const coinsDisplay = document.getElementById('coins');
-        const spinsDisplay = document.getElementById('spins');
-        const referralSection = document.getElementById('referralSection');
-        const refCodeSpan = document.getElementById('refCode');
-        const leaderboardItems = document.getElementById('leaderboardItems');
-        const bgToggle = document.getElementById('bgToggle');
-        const soundToggle = document.getElementById('soundToggle');
-        const tgBtn = document.getElementById('tgBtn');
-        const particlesEl = document.getElementById('particles');
-        
-        // Sound elements
         const spinSound = document.getElementById('spinSound');
         const winSound = document.getElementById('winSound');
         const clickSound = document.getElementById('clickSound');
-        const refSound = document.getElementById('refSound');
+        let isSpinning = false;
         
-        // ======================
-        // INITIALIZATION
-        // ======================
-        initParticles();
+        // Initialize wheel
         drawWheel();
-        updateStats();
-        loadLeaderboard();
-        checkSavedUser();
         
-        // ======================
-        // EVENT LISTENERS
-        // ======================
-        saveBtn.addEventListener('click', saveUsername);
-        spinBtn.addEventListener('click', spinWheel);
-        refBtn.addEventListener('click', generateReferral);
-        copyRef.addEventListener('click', copyReferral);
-        bgToggle.addEventListener('click', toggleBackground);
-        soundToggle.addEventListener('click', toggleSound);
-        tgBtn.addEventListener('click', () => playSound(clickSound));
-        
-        // ======================
-        // CORE FUNCTIONS
-        // ======================
-        
+        // Create background particles
         function initParticles() {
-            // Create 50 particles for background
+            const particlesEl = document.getElementById('particles');
             for (let i = 0; i < 50; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
-                
-                // Random properties
-                const size = Math.random() * 20 + 5;
-                const posX = Math.random() * 100;
-                const delay = Math.random() * 15;
-                const duration = Math.random() * 10 + 10;
-                
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${posX}%`;
-                particle.style.animationDelay = `${delay}s`;
-                particle.style.animationDuration = `${duration}s`;
-                
+                particle.style.width = `${Math.random() * 20 + 5}px`;
+                particle.style.height = particle.style.width;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 15}s`;
+                particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
                 particlesEl.appendChild(particle);
             }
         }
         
+        // Draw wheel segments
         function drawWheel() {
             const center = wheel.width / 2;
             const radius = center - 10;
@@ -479,20 +187,14 @@
             
             ctx.clearRect(0, 0, wheel.width, wheel.height);
             
-            // Draw segments
             segments.forEach((segment, i) => {
-                // Segment path
+                // Draw segment
                 ctx.beginPath();
                 ctx.fillStyle = segment.color;
                 ctx.moveTo(center, center);
                 ctx.arc(center, center, radius, i * arc, (i + 1) * arc);
                 ctx.lineTo(center, center);
                 ctx.fill();
-                
-                // Add border
-                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
                 
                 // Draw text
                 ctx.save();
@@ -501,88 +203,52 @@
                 ctx.textAlign = "right";
                 ctx.fillStyle = "#fff";
                 ctx.font = "bold 16px Arial";
-                ctx.shadowColor = 'rgba(0,0,0,0.5)';
-                ctx.shadowBlur = 3;
-                
-                // Draw icon
                 ctx.fillText(segment.icon, radius - 40, 5);
-                
-                // Draw value
                 ctx.font = "bold 20px Arial";
                 ctx.fillText(segment.text, radius - 10, 5);
-                
                 ctx.restore();
             });
-            
-            // Draw center circle
-            ctx.beginPath();
-            ctx.fillStyle = '#1a1a2e';
-            ctx.arc(center, center, 20, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-            ctx.lineWidth = 3;
-            ctx.stroke();
-            
-            // Draw spin arrow
-            ctx.beginPath();
-            ctx.fillStyle = '#ff1493';
-            ctx.moveTo(center - 10, 20);
-            ctx.lineTo(center + 10, 20);
-            ctx.lineTo(center, 0);
-            ctx.closePath();
-            ctx.fill();
         }
         
+        // Spin wheel function
         function spinWheel() {
             if (isSpinning) return;
-            if (!username) {
-                showError("Please enter and save your username first!");
-                return;
-            }
-            if (spinsLeft <= 0) {
-                showError("No spins left for today!");
-                return;
-            }
-            if (coins < 10) {
-                showError("Not enough coins! Earn more or come back tomorrow.");
-                return;
-            }
             
-            playSound(clickSound);
             isSpinning = true;
-            spinsLeft--;
-            coins -= 10;
-            updateStats();
-            
-            // Add spinning animation
-            gsap.to(".wheel-glow", { 
-                opacity: 0.8, 
-                duration: 0.5,
-                yoyo: true,
-                repeat: -1 
-            });
-            
-            playSound(spinSound);
+            spinBtn.disabled = true;
+            clickSound.play();
+            spinSound.play();
             
             const spinDuration = 4000;
             const spinAngle = 3600 + Math.floor(Math.random() * 360);
             
-            // Animate with GSAP for smoother rotation
+            // GSAP animation for smooth spinning
             gsap.to(wheel, {
                 rotation: spinAngle,
                 duration: spinDuration / 1000,
                 ease: "back.out(0.2)",
-                onComplete: declareWinner,
+                onComplete: () => {
+                    const winnerIndex = Math.floor((gsap.getProperty(wheel, "rotation") % 360) / 360 * segments.length);
+                    declareWinner(winnerIndex);
+                },
                 onUpdate: function() {
                     wheel.style.transform = `rotate(${this.targets()[0].rotation}deg)`;
                 }
             });
         }
         
-        function declareWinner() {
-            const currentRotation = gsap.getProperty(wheel, "rotation") % 360;
-            const winnerIndex = Math.floor((currentRotation / 360) * segments.length);
-            const prize = segments[winnerIndex].value;
+        // Handle winner
+        function declareWinner(winnerIndex) {
+            isSpinning = false;
+            spinBtn.disabled = false;
+            winSound.play();
+            
+            // Confetti explosion
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
             
             // Highlight winner segment
             const center = wheel.width / 2;
@@ -592,330 +258,16 @@
             ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
             ctx.beginPath();
             ctx.moveTo(center, center);
-            ctx.arc(center, center, radius, 
-                   winnerIndex * arc, 
-                   (winnerIndex + 1) * arc);
+            ctx.arc(center, center, radius, winnerIndex * arc, (winnerIndex + 1) * arc);
             ctx.lineTo(center, center);
             ctx.fill();
-            
-            // Award prize
-            if (prize > 0) {
-                coins += prize;
-                playSound(winSound);
-                
-                // Confetti explosion
-                confetti({
-                    particleCount: 150,
-                    spread: 70,
-                    origin: { y: 0.6 }
-                });
-                
-                // Telegram notification
-                sendTelegramAlert(`${username} won ${prize} coins!`);
-                
-                // Prize animation
-                gsap.to("#coins", {
-                    scale: 1.5,
-                    color: "#ffeb3b",
-                    duration: 0.3,
-                    yoyo: true,
-                    repeat: 1
-                });
-            }
-            
-            updateStats();
-            saveGame();
-            isSpinning = false;
-            
-            // Reset glow animation
-            gsap.killTweensOf(".wheel-glow");
-            document.querySelector(".wheel-glow").style.opacity = 0;
             
             setTimeout(drawWheel, 1000);
         }
         
-        function saveUsername() {
-            playSound(clickSound);
-            username = document.getElementById('username').value.trim();
-            
-            if (!username) {
-                showError("Please enter a username!");
-                return;
-            }
-            
-            // Check if username exists
-            const savedData = localStorage.getItem(`user_${username}`);
-            
-            if (savedData) {
-                // Load existing data
-                const data = JSON.parse(savedData);
-                coins = data.coins || 100;
-                spinsLeft = data.spinsLeft || 5;
-                referralCode = data.referralCode || "";
-                
-                // Show welcome back message
-                showSuccess(`Welcome back, ${username}!`);
-            } else {
-                // New user
-                spinsLeft = 5;
-                coins = 100;
-                showSuccess(`Welcome, ${username}! You got 100 bonus coins!`);
-                
-                // Telegram notification for new user
-                sendTelegramAlert(`New user joined: ${username}`);
-            }
-            
-            updateStats();
-            
-            // Show referral if exists
-            if (referralCode) {
-                referralSection.classList.add('active');
-                refCodeSpan.textContent = referralCode;
-            }
-            
-            saveGame();
-        }
-        
-        function generateReferral() {
-            playSound(clickSound);
-            
-            if (!username) {
-                showError("Please save your username first!");
-                return;
-            }
-            
-            if (!referralCode) {
-                referralCode = generateRefCode();
-                refCodeSpan.textContent = referralCode;
-                referralSection.classList.add('active');
-                
-                // Add referral bonus
-                coins += 50;
-                updateStats();
-                saveGame();
-                
-                playSound(refSound);
-                showSuccess("Referral link generated! Share it to earn 50 coins per friend.");
-                
-                // Telegram notification
-                sendTelegramAlert(`${username} created referral: ${referralCode}`);
-            }
-        }
-        
-        function copyReferral() {
-            playSound(clickSound);
-            const refLink = `https://example.com/?ref=${referralCode}`;
-            navigator.clipboard.writeText(refLink);
-            showSuccess("Referral link copied to clipboard!");
-        }
-        
-        function toggleBackground() {
-            playSound(clickSound);
-            bgAnimationEnabled = !bgAnimationEnabled;
-            
-            if (bgAnimationEnabled) {
-                document.body.classList.add('animated-bg');
-                bgToggle.innerHTML = '<i class="fas fa-magic"></i>';
-                showToast("Background animation enabled");
-            } else {
-                document.body.classList.remove('animated-bg');
-                bgToggle.innerHTML = '<i class="fas fa-ban"></i>';
-                showToast("Background animation disabled");
-            }
-        }
-        
-        function toggleSound() {
-            playSound(clickSound);
-            soundEnabled = !soundEnabled;
-            
-            if (soundEnabled) {
-                soundToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
-                showToast("Sound enabled");
-            } else {
-                soundToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
-                showToast("Sound disabled");
-            }
-        }
-        
-        function checkSavedUser() {
-            // Check if any user is saved in localStorage
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith("user_")) {
-                    const data = JSON.parse(localStorage.getItem(key));
-                    if (data && data.lastActive) {
-                        // Check if last active was today
-                        const lastActive = new Date(data.lastActive);
-                        const today = new Date();
-                        
-                        if (lastActive.getDate() !== today.getDate() || 
-                            lastActive.getMonth() !== today.getMonth() || 
-                            lastActive.getFullYear() !== today.getFullYear()) {
-                            // Reset daily spins
-                            data.spinsLeft = 5;
-                            localStorage.setItem(key, JSON.stringify(data));
-                        }
-                        
-                        // Auto-fill username
-                        const username = key.replace("user_", "");
-                        document.getElementById('username').value = username;
-                        return;
-                    }
-                }
-            }
-        }
-        
-        // ======================
-        // HELPER FUNCTIONS
-        // ======================
-        
-        function playSound(sound) {
-            if (!soundEnabled) return;
-            sound.currentTime = 0;
-            sound.play().catch(e => console.log("Sound blocked:", e));
-        }
-        
-        function updateStats() {
-            coinsDisplay.textContent = coins;
-            spinsDisplay.textContent = spinsLeft;
-            
-            // Pulse animation when coins increase
-            gsap.to(coinsDisplay, {
-                scale: 1.2,
-                duration: 0.3,
-                yoyo: true,
-                repeat: 1
-            });
-        }
-        
-        function saveGame() {
-            if (!username) return;
-            
-            const gameData = {
-                coins: coins,
-                spinsLeft: spinsLeft,
-                referralCode: referralCode,
-                lastActive: new Date().toISOString()
-            };
-            
-            localStorage.setItem(`user_${username}`, JSON.stringify(gameData));
-            updateLeaderboard();
-        }
-        
-        function updateLeaderboard() {
-            const users = [];
-            
-            // Get all users from localStorage
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith("user_")) {
-                    const data = JSON.parse(localStorage.getItem(key));
-                    if (data && data.coins) {
-                        users.push({
-                            username: key.replace("user_", ""),
-                            coins: data.coins
-                        });
-                    }
-                }
-            }
-            
-            // Sort by coins
-            users.sort((a, b) => b.coins - a.coins);
-            
-            // Save leaderboard
-            localStorage.setItem("leaderboard", JSON.stringify(users));
-            
-            // Display top 5
-            displayLeaderboard(users.slice(0, 5));
-        }
-        
-        function displayLeaderboard(users) {
-            leaderboardItems.innerHTML = "";
-            
-            users.forEach((user, index) => {
-                const item = document.createElement('div');
-                item.className = 'leaderboard-item';
-                item.style.animationDelay = `${index * 0.1}s`;
-                
-                item.innerHTML = `
-                    <span>${index + 1}. ${user.username}</span>
-                    <span>${user.coins} <i class="fas fa-coins"></i></span>
-                `;
-                
-                leaderboardItems.appendChild(item);
-            });
-        }
-        
-        function loadLeaderboard() {
-            const savedLeaderboard = localStorage.getItem("leaderboard");
-            if (savedLeaderboard) {
-                displayLeaderboard(JSON.parse(savedLeaderboard));
-            }
-        }
-        
-        function generateRefCode() {
-            return Math.random().toString(36).substring(2, 8).toUpperCase();
-        }
-        
-        function sendTelegramAlert(message) {
-            // Using Telegram Bot API
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`)
-                .catch(err => console.error("Telegram error:", err));
-        }
-        
-        function showError(message) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: message,
-                confirmButtonColor: '#ff1493'
-            });
-        }
-        
-        function showSuccess(message) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: message,
-                confirmButtonColor: '#8a2be2',
-                timer: 2000
-            });
-        }
-        
-        function showToast(message) {
-            const toast = document.createElement('div');
-            toast.style.position = 'fixed';
-            toast.style.bottom = '20px';
-            toast.style.left = '50%';
-            toast.style.transform = 'translateX(-50%)';
-            toast.style.backgroundColor = '#1a1a2e';
-            toast.style.color = 'white';
-            toast.style.padding = '10px 20px';
-            toast.style.borderRadius = '20px';
-            toast.style.boxShadow = '0 3px 10px rgba(0,0,0,0.3)';
-            toast.style.zIndex = '1000';
-            toast.style.border = '1px solid #8a2be2';
-            toast.textContent = message;
-            
-            document.body.appendChild(toast);
-            
-            // Animate in
-            gsap.from(toast, {
-                y: 50,
-                opacity: 0,
-                duration: 0.3
-            });
-            
-            // Remove after 2 seconds
-            setTimeout(() => {
-                gsap.to(toast, {
-                    y: 50,
-                    opacity: 0,
-                    duration: 0.3,
-                    onComplete: () => toast.remove()
-                });
-            }, 2000);
-        }
+        // Initialize
+        initParticles();
+        spinBtn.addEventListener('click', spinWheel);
     </script>
 </body>
-    </html>
+</html>
